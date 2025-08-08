@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
-import 'quest_card.dart'; // Import the QuestCard widget
+import '../models/quest.dart';
+import 'quest_card.dart';
 
 class QuestColumn extends StatelessWidget {
   final String title;
-  final List<String> questTitles;
+  final List<Quest> quests;
 
-  const QuestColumn({
-    super.key,
-    required this.title,
-    required this.questTitles,
-  });
+  const QuestColumn({super.key, required this.title, required this.quests});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 300, // Fixed width for each column
+      width: 300,
       margin: const EdgeInsets.symmetric(horizontal: 8.0),
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
@@ -24,18 +21,16 @@ class QuestColumn extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Column Title
           Text(
             title,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          // List of Quest Cards
           Expanded(
             child: ListView.builder(
-              itemCount: questTitles.length,
+              itemCount: quests.length,
               itemBuilder: (context, index) {
-                return QuestCard(title: questTitles[index]);
+                return QuestCard(title: quests[index].title);
               },
             ),
           ),

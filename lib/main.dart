@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/quest_board_provider.dart';
 import 'screens/quest_board_screen.dart';
 
 void main() {
-  runApp(const NQIApp());
+  runApp(
+    // Wrap the entire app in a ChangeNotifierProvider.
+    // This makes the QuestBoardProvider instance available to all widgets below it in the tree.
+    ChangeNotifierProvider(
+      create: (context) => QuestBoardProvider(),
+      child: const NQIApp(),
+    ),
+  );
 }
 
 class NQIApp extends StatelessWidget {

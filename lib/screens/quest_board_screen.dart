@@ -1,20 +1,47 @@
 import 'package:flutter/material.dart';
-import '../widgets/quest_column.dart'; // Import the QuestColumn widget
+import 'package:provider/provider.dart';
+import '../providers/quest_board_provider.dart';
+import '../widgets/quest_column.dart';
 
 class QuestBoardScreen extends StatelessWidget {
   const QuestBoardScreen({super.key});
 
+  void _showAddQuestDialog(BuildContext context) {
+    final TextEditingController controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('New Quest Idea'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(labelText: 'Quest Title'),
+        ),
+        actions: [
+          TextButton(
+            child: const Text('Cancel'),
+            onPressed: () => Navigator.of(ctx).pop(),
+          ),
+          TextButton(
+            child: const Text('Add'),
+            onPressed: () {
+              if (controller.text.isNotEmpty) {
+                Provider.of<QuestBoardProvider>(
+                  context,
+                  listen: false,
+                ).addQuest(controller.text);
+                Navigator.of(ctx).pop();
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Placeholder data for our board
-    final Map<String, List<String>> boardData = {
-      'Idea Greenhouse': ['Write a novel', 'Learn to code in Rust'],
-      'Quest Log': ['Learn Ukulele', 'Build a PC'],
-      "This Cycle's Quest": ['Finish NQI Frontend'],
-      'Next Up': ['Create static UI for Quest Board', 'Add state management'],
-      'In-Progress': ['Setup Flutter Project'],
-      'Harvested': ['Setup Go Backend', 'Create User Registration API'],
-    };
+    final boardProvider = Provider.of<QuestBoardProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -23,13 +50,17 @@ class QuestBoardScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        // Use a ListView with horizontal scrolling to hold the columns
         child: ListView(
           scrollDirection: Axis.horizontal,
-          children: boardData.entries.map((entry) {
-            return QuestColumn(title: entry.key, questTitles: entry.value);
+          children: boardProvider.boardData.entries.map((entry) {
+            return QuestColumn(title: entry.key, quests: entry.value);
           }).toList(),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddQuestDialog(context),
+        tooltip: 'Add Quest',
+        child: const Icon(Icons.add),
       ),
     );
   }
